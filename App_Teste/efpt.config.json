@@ -1,0 +1,109 @@
+﻿{
+   "CodeGenerationMode": 3,
+   "ContextClassName": "TestePraticoContext",
+   "ContextNamespace": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": "Data",
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "App_Teste",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[VDependentesEFuncionarios]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[VFuncionarios]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[VFuncionariosEDependentes]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[VFuncionariosFiltroGenero]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[AddDependentesTB]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[AddFuncionarioTB]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[AtualizaDependentesTB]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[AtualizaFuncionarioTB]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[BuscaDependentesTB]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[BuscaFuncionarioTB]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[BuscaIDDependentesTB]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[BuscaIDFuncionarioTB]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[DeleteDependentesTB]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[DeleteFuncionarioTB]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[DependentesAgrupados]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[SelectDependentesTB]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[SelectFuncionarioTB]",
+         "ObjectType": 1
+      }
+   ],
+   "UiHint": null,
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false
+}

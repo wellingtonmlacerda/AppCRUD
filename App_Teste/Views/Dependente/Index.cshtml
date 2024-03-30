@@ -1,0 +1,94 @@
+﻿@using App_Teste.Models
+@model IEnumerable<App_Teste.Models.VdependentesEfuncionario>
+
+@{
+    ViewData["Title"] = "Funcionarios";
+}
+
+<p>
+    <a asp-controller="Home" asp-action="Index">Home</a> / Dependente
+</p>
+
+<div id="myPartialContainer">
+    @await Html.PartialAsync("_Edit", new BuscaIDDependentesTBResult(){ DataNascimento = DateTime.Today})
+</div>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Nome
+            </th>
+            <th>
+                Data de Nascimento
+            </th>
+            <th>
+                Funcionário
+            </th>
+            <th>
+                Gênero
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr onclick="editar(@item.Id)">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataNascimento)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NomeFuncionario)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NomeGenero)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    function editar(Id) {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("Edit")",
+            data: { id: Id },
+            dataType: "text",
+            success: function (data) {
+                $('#myPartialContainer').html(data);
+            },
+            error: function (req, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    function Pesquisa() {
+        let pesquisa = $("#txtBusca").val()
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("Pesquisa")",
+            data: { Nome: pesquisa },
+            dataType: "text",
+            success: function (data) {
+                
+            },
+            error: function (req, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    if (!isFinite('@TempData["ErrorMessage"]')) {
+        alert('@TempData["ErrorMessage"]');
+    }
+</script>
