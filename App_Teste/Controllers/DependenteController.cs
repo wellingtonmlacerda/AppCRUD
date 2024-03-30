@@ -111,7 +111,7 @@ namespace App_Teste.Controllers
         {
             try
             {
-                await _context.Procedures.DeleteFuncionarioTBAsync(id);
+                await _context.Procedures.DeleteDependentesTBAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

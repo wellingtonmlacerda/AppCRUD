@@ -59,13 +59,13 @@
     <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Scripts\0_Insert_Genero.sql" />
-    <Build Include="Scripts\01_Popula_Dependentes.sql" />
-    <Build Include="Scripts\02_Popula_Funcionarios_Masculino.sql" />
+    <Build Include="Scripts\02_Insert_Genero.sql" />
+    <Build Include="Scripts\05_Popula_Dependentes.sql" />
+    <Build Include="Scripts\04_Popula_Funcionarios_Masculino.sql" />
     <Build Include="Scripts\03_Popula_Funcionarios_Feminino.sql" />
-    <Build Include="Scripts\04_Pupula_Dependentes_Funcionarios.sql" />
-    <Build Include="Scripts\Create_Tables.sql" />
-    <Build Include="Scripts\Create_Views.sql" />
+    <Build Include="Scripts\06_Pupula_Dependentes_Funcionarios.sql" />
+    <Build Include="Scripts\00_Create_Tables.sql" />
+    <Build Include="Scripts\01_Create_Views.sql" />
     <Build Include="Scripts\Crud_DependentesTB.sql" />
     <Build Include="Scripts\Crud_FuncionarioTB.sql" />
     <Build Include="Scripts\Procedure_DependentesAgrupados.sql" />

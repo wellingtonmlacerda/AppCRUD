@@ -27,7 +27,10 @@ GO
 CREATE OR ALTER PROCEDURE DeleteDependentesTB (@ID int = 0)
 AS
 	if(SELECT COUNT(1) FROM DependentesTB Where ID = @ID) > 0
+	BEGIN
+		Update A Set A.FuncionarioId = null, GeneroID = null From DependentesTB A Where ID = @ID
 		Delete from DependentesTB Where ID = @ID
+	END
 GO
 
 CREATE OR ALTER PROCEDURE AtualizaDependentesTB (@ID int, @Nome varchar(100), @DataNacimento datetime, @GeneroID int)

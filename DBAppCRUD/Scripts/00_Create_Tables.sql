@@ -7,7 +7,7 @@ GO
 Create Table FuncionarioTB (
 	ID int IDENTITY(1,1) PRIMARY KEY not null,
 	Nome varchar(100) not null,
-	DataNascimento datetime not null,
+	DataNascimento date not null,
 	Salario float not null,
 	GeneroID int null,
 	FOREIGN KEY (GeneroID) REFERENCES GeneroTB(ID)

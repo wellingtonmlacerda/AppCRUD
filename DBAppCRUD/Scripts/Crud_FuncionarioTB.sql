@@ -28,6 +28,7 @@ CREATE OR ALTER PROCEDURE DeleteFuncionarioTB (@ID int = 0)
 AS
 	if(SELECT COUNT(1) FROM FuncionarioTB F Where F.ID = @ID) > 0
 	BEGIN
+		Update A Set A.GeneroID = null from FuncionarioTB A Where ID = @ID
 		Delete from FuncionarioTB Where ID = @ID
 	END
 GO
