@@ -1,0 +1,1 @@
+Insert Into GeneroTB (NomeGenero) Values ('FEMININO'), ('MASCULINO')
