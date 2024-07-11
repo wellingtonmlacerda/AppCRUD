@@ -37,19 +37,6 @@ jobs:
         echo "::set-output name=backup_dir::$backupDir"
       shell: powershell
 
-    - name: Find web .csproj files
-      id: find_csproj
-      run: |
-        $csproj = Get-ChildItem -Path . -Recurse -Filter *.csproj | Where-Object { $_.Name -notlike 'DBAppCRUD*.csproj' } | Select-Object -First 1
-        if ($csproj) {
-          Write-Host "Found web .csproj file: $($csproj.FullName)"
-          echo "csproj_path=$($csproj.FullName)" >> $GITHUB_ENV
-        } else {
-          Write-Host "No web .csproj file found."
-          exit 1
-        }
-      shell: powershell
-
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
@@ -69,11 +56,8 @@ jobs:
 
     - name: Publish the application
       if: ${{ env.csproj_path }} # Executa apenas se encontrou um projeto web
-      run: |
-        if (-not (Test-Path -Path $env:Publish_Dir)) {
-          New-Item -ItemType Directory -Force -Path $env:Publish_Dir
-        }
-        msbuild ${{ env.csproj_path }} /p:Configuration=Release /p:OutputPath=${{ env.Publish_Dir }}
+      run: msbuild ${{ env.csproj_path }} /p:Configuration=Release /p:OutputPath=${{ env.Publish_Dir }}
+
       shell: powershell
 
     - name: Upload backup artifact
