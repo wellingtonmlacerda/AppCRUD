@@ -21,7 +21,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        fetch-depth: 0
+        dotnet-version: 7.0.x
 
     - name: Create a backup
       id: create_backup
@@ -37,6 +37,19 @@ jobs:
         echo "::set-output name=backup_dir::$backupDir"
       shell: powershell
 
+    - name: Find App_Teste .csproj file
+      id: find_csproj
+      run: |
+        $csproj = Get-ChildItem -Path . -Recurse -Filter App_Teste*.csproj | Select-Object -First 1
+        if ($csproj) {
+          Write-Host "Found App_Teste .csproj file: $($csproj.FullName)"
+          echo "csproj_path=$($csproj.FullName)" >> $GITHUB_ENV
+        } else {
+          Write-Host "No App_Teste .csproj file found."
+          exit 1
+        }
+      shell: powershell
+
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
@@ -44,20 +57,23 @@ jobs:
       run: dotnet restore
       shell: powershell
 
-    - name: Build
-      if: ${{ env.csproj_path }} # Executa apenas se encontrou um projeto web
+    - name: Build App_Teste
+      if: ${{ env.csproj_path }} # Executa apenas se encontrou o projeto App_Teste
       run: dotnet build ${{ env.csproj_path }} --configuration Release --no-restore
       shell: powershell
 
-    - name: Test
-      if: ${{ env.csproj_path }} # Executa apenas se encontrou um projeto web
+    - name: Test App_Teste
+      if: ${{ env.csproj_path }} # Executa apenas se encontrou o projeto App_Teste
       run: dotnet test ${{ env.csproj_path }} --no-build --verbosity normal
       shell: powershell
 
-    - name: Publish the application
-      if: ${{ env.csproj_path }} # Executa apenas se encontrou um projeto web
-      run: msbuild ${{ env.csproj_path }} /p:Configuration=Release /p:OutputPath=${{ env.Publish_Dir }}
-
+    - name: Publish App_Teste
+      if: ${{ env.csproj_path }} # Executa apenas se encontrou o projeto App_Teste
+      run: |
+        if (-not (Test-Path -Path $env:Publish_Dir)) {
+          New-Item -ItemType Directory -Force -Path $env:Publish_Dir
+        }
+        msbuild ${{ env.csproj_path }} /p:Configuration=Release /p:OutputPath=${{ env.Publish_Dir }}
       shell: powershell
 
     - name: Upload backup artifact
@@ -67,7 +83,7 @@ jobs:
         path: ${{ steps.create_backup.outputs.backup_dir }}/*.zip
 
     - name: Upload build artifacts
-      if: ${{ env.csproj_path }} # Faz upload apenas se encontrou um projeto web
+      if: ${{ env.csproj_path }} # Faz upload apenas se encontrou o projeto App_Teste
       uses: actions/upload-artifact@v3
       with:
         name: Published App
