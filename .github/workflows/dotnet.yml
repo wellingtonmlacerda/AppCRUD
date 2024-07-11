@@ -58,8 +58,10 @@ jobs:
     #- name: Setup MSBuild.exe
     #  uses: microsoft/setup-msbuild@v2
 
-    - name: Restore the application
-      run: msbuild ${{ env.csproj_path }} /t:Restore
+    #- name: Restore the application
+    #  run: msbuild ${{ env.csproj_path }} /t:Restore
+    - name: Restore dependencies
+      run: dotnet restore
 
     #- name: Build the application
     #  run: msbuild ${{ env.csproj_path }} /p:Configuration=Release
