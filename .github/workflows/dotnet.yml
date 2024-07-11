@@ -11,8 +11,12 @@ on:
 
 jobs:
   build:
+    runs-on: well_self_host
 
-    runs-on: ubuntu-latest
+    env:
+      Solution_Name: plinwfmweb.sln
+      Backup_Root_Dir: C:\backup_publish
+      Publish_Dir: C:\plinhomologacao
 
     steps:
     - uses: actions/checkout@v4
@@ -20,9 +24,57 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    
+    - name: Create a backup
+      id: create_backup
+      run: |
+        $timestamp = Get-Date -Format "yyyyMMddHHmmss"
+        $solutionName = $env:Solution_Name -replace '\.sln$', ''
+        $backupDir = "$env:Backup_Root_Dir\$solutionName\$timestamp"
+        if (-not (Test-Path -Path $backupDir)) {
+          New-Item -ItemType Directory -Force -Path $backupDir
+        }
+        $backupFileName = "backup_$timestamp.zip"
+        Compress-Archive -Path $env:Publish_Dir\* -DestinationPath "$backupDir/$backupFileName"
+        echo "::set-output name=backup_dir::$backupDir"
+      shell: powershell
+
+    - name: List directories and files
+      run: Get-ChildItem -Path . -Recurse
+
+    - name: Find .csproj files
+      id: find_csproj
+      run: |
+        $csproj = Get-ChildItem -Path . -Recurse -Filter *.csproj | Select-Object -First 1
+        if ($csproj) {
+          Write-Host "Found .csproj file: $($csproj.FullName)"
+          echo "csproj_path=$($csproj.FullName)" >> $GITHUB_ENV
+        } else {
+          Write-Host "No .csproj file found."
+          exit 1
+        }
+      shell: powershell
+
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Restore the application
+      run: msbuild ${{ env.csproj_path }} /t:Restore
+
+    - name: Build the application
+      run: msbuild ${{ env.csproj_path }} /p:Configuration=Release
+
+    - name: Publish the application
+      run: msbuild ${{ env.csproj_path }} /p:Configuration=Release /p:OutputPath=${{ env.Publish_Dir }}
+
+    - name: Upload backup artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Backup
+        path: ${{ steps.create_backup.outputs.backup_dir }}/*.zip
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Published App
+        path: ${{ env.Publish_Dir }}
