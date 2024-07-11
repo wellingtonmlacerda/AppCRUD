@@ -50,14 +50,25 @@ jobs:
         }
       shell: powershell
 
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
+
     - name: Restore dependencies
       run: dotnet restore
+      shell: powershell
+
     - name: Build
-      run: dotnet build --no-restore
+      if: ${{ env.csproj_path }} # Executa apenas se encontrou um projeto web
+      run: dotnet build ${{ env.csproj_path }} --configuration Release --no-restore
+      shell: powershell
+
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      if: ${{ env.csproj_path }} # Executa apenas se encontrou um projeto web
+      run: dotnet test ${{ env.csproj_path }} --no-build --verbosity normal
+      shell: powershell
 
     - name: Publish the application
+      if: ${{ env.csproj_path }} # Executa apenas se encontrou um projeto web
       run: |
         if (-not (Test-Path -Path $env:Publish_Dir)) {
           New-Item -ItemType Directory -Force -Path $env:Publish_Dir
@@ -72,6 +83,7 @@ jobs:
         path: ${{ steps.create_backup.outputs.backup_dir }}/*.zip
 
     - name: Upload build artifacts
+      if: ${{ env.csproj_path }} # Faz upload apenas se encontrou um projeto web
       uses: actions/upload-artifact@v3
       with:
         name: Published App
