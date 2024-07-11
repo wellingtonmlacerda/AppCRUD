@@ -17,11 +17,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-    
+
     - name: Create a backup
       id: create_backup
       run: |
@@ -34,37 +35,43 @@ jobs:
         $backupFileName = "backup_$timestamp.zip"
         Compress-Archive -Path $env:Publish_Dir\* -DestinationPath "$backupDir/$backupFileName"
         echo "::set-output name=backup_dir::$backupDir"
-      shell: powershell
+      shell: pwsh
 
     - name: List directories and files
       run: Get-ChildItem -Path . -Recurse
+      shell: pwsh
 
-    - name: Find .csproj files
+    - name: Find web .csproj files
       id: find_csproj
       run: |
-        $csproj = Get-ChildItem -Path . -Recurse -Filter *.csproj | Select-Object -First 1
+        $csproj = Get-ChildItem -Path . -Recurse -Filter *.csproj | Where-Object { $_.Name -notlike 'DBAppCRUD*.csproj' } | Select-Object -First 1
         if ($csproj) {
-          Write-Host "Found .csproj file: $($csproj.FullName)"
+          Write-Host "Found web .csproj file: $($csproj.FullName)"
           echo "csproj_path=$($csproj.FullName)" >> $GITHUB_ENV
         } else {
-          Write-Host "No .csproj file found."
+          Write-Host "No web .csproj file found."
           exit 1
         }
-      shell: powershell
+      shell: pwsh
 
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
     - name: Restore the application
       run: msbuild ${{ env.csproj_path }} /t:Restore
-    
+      shell: pwsh
+
     - name: Build app for release
       run: msbuild ${{ env.csproj_path }} -t:rebuild -verbosity:diag -property:Configuration=Release
-    # - name: Build the application
-    #   run: msbuild ${{ env.csproj_path }} /p:Configuration=Release
+      shell: pwsh
 
     - name: Publish the application
-      run: msbuild ${{ env.csproj_path }} /p:Configuration=Release /p:OutputPath=${{ env.Publish_Dir }}
+      run: |
+        if (-not (Test-Path -Path $env:Publish_Dir)) {
+          New-Item -ItemType Directory -Force -Path $env:Publish_Dir
+        }
+        msbuild ${{ env.csproj_path }} /p:Configuration=Release /p:OutputPath=${{ env.Publish_Dir }}
+      shell: pwsh
 
     - name: Upload backup artifact
       uses: actions/upload-artifact@v3
