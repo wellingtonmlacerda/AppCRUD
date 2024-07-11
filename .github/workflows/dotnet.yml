@@ -51,14 +51,6 @@ jobs:
         Write-Host "Project found: $($csproj.FullName)"
       shell: powershell
 
-    - name: Ignore DBAppCRUD .csproj file
-      run: |
-        Get-ChildItem -Path . -Recurse -Filter DBAppCRUD*.csproj | ForEach-Object {
-          Write-Host "Ignoring project: $($_.FullName)"
-          Remove-Item $_.FullName -Force
-        }
-      shell: powershell
-
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
@@ -68,8 +60,9 @@ jobs:
       shell: powershell
 
     - name: Build App_Teste
-      if: ${{ env.csproj_path }}
-      run: dotnet build ${{ env.csproj_path }} --configuration Release --no-restore
+      run: if (Test-Path -Path $env.csproj_path) {
+          dotnet build ${{ env.csproj_path }} --configuration Release --no-restore
+        }
       shell: powershell
 
     - name: Test App_Teste
