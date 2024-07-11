@@ -61,8 +61,10 @@ jobs:
     - name: Restore the application
       run: msbuild ${{ env.csproj_path }} /t:Restore
 
-    - name: Build the application
-      run: msbuild ${{ env.csproj_path }} /p:Configuration=Release
+    #- name: Build the application
+    #  run: msbuild ${{ env.csproj_path }} /p:Configuration=Release
+    - name: Build
+      run: dotnet build --no-restore
 
     - name: Publish the application
       run: msbuild ${{ env.csproj_path }} /p:Configuration=Release /p:OutputPath=${{ env.Publish_Dir }}
