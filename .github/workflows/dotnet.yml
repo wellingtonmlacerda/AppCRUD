@@ -14,9 +14,9 @@ jobs:
     runs-on: well_self_host
 
     env:
-      Solution_Name: plinwfmweb.sln
+      Solution_Name: App_Teste.sln
       Backup_Root_Dir: C:\backup_publish
-      Publish_Dir: C:\plinhomologacao
+      Publish_Dir: C:\AppCRUD
 
     steps:
     - uses: actions/checkout@v4
