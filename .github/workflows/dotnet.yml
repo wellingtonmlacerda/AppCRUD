@@ -65,10 +65,9 @@ jobs:
       shell: powershell
 
     - name: Build App_Teste
-      if: ${{ env.csproj_path }} # Executa apenas se encontrou o projeto App_Teste
       run: dotnet build ${{ env.csproj_path }} --configuration Release --no-restore
       shell: powershell
-
+      
     - name: Test App_Teste
       if: ${{ env.csproj_path }} # Executa apenas se encontrou o projeto App_Teste
       run: dotnet test ${{ env.csproj_path }} --no-build --verbosity normal
