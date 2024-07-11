@@ -37,10 +37,6 @@ jobs:
         echo "::set-output name=backup_dir::$backupDir"
       shell: powershell
 
-    - name: List directories and files
-      run: Get-ChildItem -Path . -Recurse
-      shell: powershell
-
     - name: Find web .csproj files
       id: find_csproj
       run: |
@@ -54,16 +50,12 @@ jobs:
         }
       shell: powershell
 
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Restore the application
-      run: msbuild ${{ env.csproj_path }} /t:Restore
-      shell: powershell
-
-    - name: Build app for release
-      run: msbuild ${{ env.csproj_path }} -t:rebuild -verbosity:diag -property:Configuration=Release
-      shell: powershell
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
 
     - name: Publish the application
       run: |
