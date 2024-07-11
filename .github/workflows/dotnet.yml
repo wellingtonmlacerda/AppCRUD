@@ -65,7 +65,7 @@ jobs:
       shell: powershell
 
     - name: Build App_Teste
-      run: dotnet build ${{ env.csproj_path }} --configuration Release --no-restore
+      run: dotnet build C:\actions-runner\actions-runner2\_work\AppCRUD\AppCRUD\App_Teste\App_Teste.csproj --configuration Release --no-restore
       shell: powershell
       
     - name: Test App_Teste
