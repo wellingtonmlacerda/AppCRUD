@@ -20,8 +20,6 @@ jobs:
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 7.0.x
 
     - name: Create a backup
       id: create_backup
@@ -74,12 +72,11 @@ jobs:
       shell: powershell
 
     - name: Publish App_Teste
-      if: ${{ env.csproj_path }} # Executa apenas se encontrou o projeto App_Teste
       run: |
         if (-not (Test-Path -Path $env:Publish_Dir)) {
           New-Item -ItemType Directory -Force -Path $env:Publish_Dir
         }
-        msbuild ${{ env.csproj_path }} /p:Configuration=Release /p:OutputPath=${{ env.Publish_Dir }}
+        msbuild C:\actions-runner\actions-runner2\_work\AppCRUD\AppCRUD\App_Teste\App_Teste.csproj /p:Configuration=Release /p:OutputPath=${{ env.Publish_Dir }}
       shell: powershell
 
     - name: Upload backup artifact
