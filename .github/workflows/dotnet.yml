@@ -1,7 +1,4 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: .NET
+name: .NET Build CI HOMOLOGAÇÃO
 
 on:
   push:
@@ -55,18 +52,16 @@ jobs:
         }
       shell: powershell
 
-    #- name: Setup MSBuild.exe
-    #  uses: microsoft/setup-msbuild@v2
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
 
-    #- name: Restore the application
-    #  run: msbuild ${{ env.csproj_path }} /t:Restore
-    - name: Restore dependencies
-      run: dotnet restore
-
-    #- name: Build the application
-    #  run: msbuild ${{ env.csproj_path }} /p:Configuration=Release
-    - name: Build
-      run: dotnet build --no-restore
+    - name: Restore the application
+      run: msbuild ${{ env.csproj_path }} /t:Restore
+    
+    - name: Build app for release
+      run: msbuild ${{ env.csproj_path }} -t:rebuild -verbosity:diag -property:Configuration=Release
+    # - name: Build the application
+    #   run: msbuild ${{ env.csproj_path }} /p:Configuration=Release
 
     - name: Publish the application
       run: msbuild ${{ env.csproj_path }} /p:Configuration=Release /p:OutputPath=${{ env.Publish_Dir }}
