@@ -60,8 +60,10 @@ jobs:
       shell: powershell
 
     - name: Build App_Teste
-      run: if (Test-Path -Path $env.csproj_path) {
-          dotnet build ${{ env.csproj_path }} --configuration Release --no-restore
+      run:  if (Test-Path -Path $env:csproj_path) {
+          dotnet build $env:csproj_path --configuration Release --no-restore
+        } else {
+          Write-Host "csproj_path is null or empty."
         }
       shell: powershell
 
