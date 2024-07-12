@@ -32,7 +32,7 @@ jobs:
         }
         $backupFileName = "backup_$timestamp.zip"
         Compress-Archive -Path $env:Publish_Dir\* -DestinationPath "$backupDir/$backupFileName"
-        echo "::set-output name=backup_dir::$backupDir"
+        echo "backup_dir=$backupDir" >> $GITHUB_ENV
       shell: powershell
 
     - name: Find App_Teste .csproj file
