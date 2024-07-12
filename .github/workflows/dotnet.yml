@@ -43,7 +43,7 @@ jobs:
         $csproj = Get-ChildItem -Path . -Recurse -Filter App_Teste*.csproj | Select-Object -First 1
         if ($csproj) {
           Write-Host "Found App_Teste .csproj file: $($csproj.FullName)"
-          echo "csproj_path=$($csproj.FullName)" >> $GITHUB_ENV
+          echo "csproj_path=$($csproj.FullName)" >> $env:GITHUB_ENV
         } else {
           Write-Host "No App_Teste .csproj file found."
           exit 1
@@ -51,16 +51,32 @@ jobs:
         Write-Host "Project found: $($csproj.FullName)"
       shell: powershell
 
+    - name: Print csproj_path for debugging
+      run: echo "csproj_path: ${{ env.csproj_path }}"
+
+    - name: Ignore DBAppCRUD .csproj file
+      run: |
+        Get-ChildItem -Path . -Recurse -Filter DBAppCRUD*.csproj | ForEach-Object {
+          Write-Host "Ignoring project: $($_.FullName)"
+          Remove-Item $_.FullName -Force
+        }
+      shell: powershell
+
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
     - name: Restore dependencies
-      if: ${{ env.csproj_path }}
-      run: dotnet restore ${{ env.csproj_path }}
+      run: |
+        if (Test-Path -Path $env:csproj_path) {
+          dotnet restore $env:csproj_path
+        } else {
+          Write-Host "csproj_path is null or empty."
+        }
       shell: powershell
 
     - name: Build App_Teste
-      run:  if (Test-Path -Path $env:csproj_path) {
+      run: |
+        if (Test-Path -Path $env:csproj_path) {
           dotnet build $env:csproj_path --configuration Release --no-restore
         } else {
           Write-Host "csproj_path is null or empty."
@@ -68,17 +84,24 @@ jobs:
       shell: powershell
 
     - name: Test App_Teste
-      if: ${{ env.csproj_path }}
-      run: dotnet test ${{ env.csproj_path }} --no-build --verbosity normal
+      run: |
+        if (Test-Path -Path $env:csproj_path) {
+          dotnet test $env:csproj_path --no-build --verbosity normal
+        } else {
+          Write-Host "csproj_path is null or empty."
+        }
       shell: powershell
 
     - name: Publish App_Teste
-      if: ${{ env.csproj_path }}
       run: |
-        if (-not (Test-Path -Path $env:Publish_Dir)) {
-          New-Item -ItemType Directory -Force -Path $env:Publish_Dir
+        if (Test-Path -Path $env:csproj_path) {
+          if (-not (Test-Path -Path $env:Publish_Dir)) {
+            New-Item -ItemType Directory -Force -Path $env:Publish_Dir
+          }
+          msbuild $env:csproj_path /p:Configuration=Release /p:OutputPath=$env:Publish_Dir
+        } else {
+          Write-Host "csproj_path is null or empty."
         }
-        msbuild ${{ env.csproj_path }} /p:Configuration=Release /p:OutputPath=${{ env.Publish_Dir }}
       shell: powershell
 
     - name: Upload backup artifact
@@ -88,7 +111,6 @@ jobs:
         path: ${{ steps.create_backup.outputs.backup_dir }}/*.zip
 
     - name: Upload build artifacts
-      if: ${{ env.csproj_path }}
       uses: actions/upload-artifact@v3
       with:
         name: Published App
