@@ -20,8 +20,6 @@ jobs:
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 7.0.x
 
     - name: Create a backup
       id: create_backup
@@ -50,9 +48,6 @@ jobs:
         }
         Write-Host "Project found: $($csproj.FullName)"
       shell: powershell
-
-    - name: Print csproj_path for debugging
-      run: echo "csproj_path: ${{ env.csproj_path }}"
 
     - name: Ignore DBAppCRUD .csproj file
       run: |
